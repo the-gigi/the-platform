@@ -1,2 +1,2 @@
-# game-lobby
-General-purpose game lobby service
+# the-platform
+General-purpose platform for managing games
