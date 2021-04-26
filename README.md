@@ -4,8 +4,7 @@ General-purpose platform for managing games
 
 # Design
 
-Check out this [whiteboard brainstorming](https://excalidraw.com/#json=5887080794161152,ogBjGqxgSBmoLgp31tNkXg)
-
+Check out this whiteboard discussion: ![](the-platform-design.png)
 
 
 ## GameEnginePlatform interface
