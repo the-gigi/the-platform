@@ -15,11 +15,23 @@ type InMemoryPlatform struct {
 	users         map[string]bool
 	engines       map[game_engine.GameEngine]*om.GameType
 	gameTypes     map[string]*om.GameType
-	openGames     map[string]Game
-	runningGames  map[string]Game
-	finishedGames map[string]Game
+	openGames     map[string]*Game
+	runningGames  map[string]*Game
+	finishedGames map[string]*Game
 
 	nextGameId int
+}
+
+func (p *InMemoryPlatform) startGame(gameId string) (err error) {
+	game, ok := p.openGames[gameId]
+	if !ok {
+		err = errors.New("no such open game " + gameId)
+		return
+	}
+
+	p.runningGames[gameId] = game
+	delete(p.openGames, gameId)
+	return
 }
 
 // GameLobby interface
@@ -47,8 +59,20 @@ func (p *InMemoryPlatform) CreateGame(gameType om.GameType, state string) (gameI
 
 	p.nextGameId++
 	gameId = strconv.Itoa(p.nextGameId)
-	p.openGames[gameId] = newGame(gameId, gameType, state)
+	game, err := newGame(gameId, gameType, state)
+	if err != nil {
+		return
+	}
 
+	p.openGames[gameId] = game
+
+	err = p.isGameTypeValid(gameType)
+	if err != nil {
+		return
+	}
+
+	p.engines[gameEngine] = &gameType
+	p.gameTypes[gameType.Name] = &gameType
 	return
 }
 
@@ -83,7 +107,6 @@ func (p *InMemoryPlatform) isGameTypeValid(gameType om.GameType) (err error) {
 
 func (p *InMemoryPlatform) Register(gameType om.GameType, gameEngine game_engine.GameEngine) (err error) {
 	if p.engines[gameEngine] != nil {
-		err = errors.Errorf("engine %v already registered for game type %s", gameEngine, gameType.Name)
 		return
 	}
 
@@ -137,7 +160,7 @@ func (p *InMemoryPlatform) GameOver(gameId string) (err error) {
 	return
 }
 
-func (p *InMemoryPlatform) Send(gameEngine, player string, data string) (err error) {
+func (p *InMemoryPlatform) Send(gameId string, player string, data string) (err error) {
 	return
 }
 
@@ -170,8 +193,8 @@ func newInMemoryPlatform() *InMemoryPlatform {
 		users:         map[string]bool{},
 		engines:       map[game_engine.GameEngine]*om.GameType{},
 		gameTypes:     map[string]*om.GameType{},
-		openGames:     map[string]Game{},
-		runningGames:  map[string]Game{},
-		finishedGames: map[string]Game{},
+		openGames:     map[string]*Game{},
+		runningGames:  map[string]*Game{},
+		finishedGames: map[string]*Game{},
 	}
 }

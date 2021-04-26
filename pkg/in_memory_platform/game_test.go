@@ -8,7 +8,8 @@ import (
 
 var _ = Describe("Game Tests", func() {
 	var (
-		game Game
+		err  error
+		game *Game
 	)
 
 	BeforeEach(func() {
@@ -18,7 +19,8 @@ var _ = Describe("Game Tests", func() {
 			MinPlayerCount: 2,
 			MaxPlayerCount: 4,
 		}
-		game = newGame("1", gameType, "")
+		game, err = newGame("1", gameType, "")
+		Ω(err).Should(BeNil())
 		game.PlayerCount = len(game.players)
 	})
 

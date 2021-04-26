@@ -32,8 +32,13 @@ func (g Game) Join(player string) (err error) {
 	return
 }
 
-func newGame(gameId string, gameType om.GameType, state string) Game {
-	return Game{
+func newGame(gameId string, gameType om.GameType, state string) (game *Game, err error) {
+	if gameId == "" {
+		err = errors.New("gameId can't be empty")
+		return
+	}
+
+	game = &Game{
 		Game: om.Game{
 			Id:   gameId,
 			Type: gameType,
@@ -41,4 +46,6 @@ func newGame(gameId string, gameType om.GameType, state string) Game {
 		players: map[string]bool{},
 		state:   state,
 	}
+
+	return
 }

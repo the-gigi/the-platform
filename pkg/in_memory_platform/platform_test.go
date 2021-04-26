@@ -18,7 +18,8 @@ var _ = Describe("Platform Tests", func() {
 		gameTypes         []om.GameType
 		dominionGameType  *om.GameType
 		blocktserGameType *om.GameType
-		dominionGame      Game
+
+		dominionGame      *Game
 		mockGameEngine    *mocks.MockGameEngine
 	)
 
@@ -39,8 +40,8 @@ var _ = Describe("Platform Tests", func() {
 			MaxPlayerCount: 1,
 		}
 
-		dominionGame = newGame("1", *dominionGameType, "")
-		dominionGame.state = dominionGameState
+		dominionGame, err = newGame("1", *dominionGameType, dominionGameState)
+		Ω(err).Should(BeNil())
 		mockGameEngine = &mocks.MockGameEngine{}
 	})
 
@@ -77,25 +78,50 @@ var _ = Describe("Platform Tests", func() {
 		})
 	})
 
-	FContext("GameLobby tests", func() {
+	Context("Platform tests", func() {
 
 		It("should load state successfully", func() {
-			_, err = p.CreateGame(*dominionGameType, "")
+			err = p.Register(*dominionGameType, mockGameEngine)
 			Ω(err).Should(BeNil())
+
+			p.runningGames[dominionGame.Id] = dominionGame
 
 			state, err := p.LoadState(dominionGame.Id)
 			Ω(err).Should(BeNil())
 			Ω(state).Should(Equal(dominionGameState))
+
+			newState := "new-state"
+			gameId, err := p.CreateGame(*dominionGameType, newState)
+			Ω(err).Should(BeNil())
+
+			err = p.startGame(gameId)
+			Ω(err).Should(BeNil())
+
+			state, err = p.LoadState(gameId)
+			Ω(err).Should(BeNil())
+			Ω(state).Should(Equal(newState))
 		})
 
 		It("should save state successfully", func() {
+			p.runningGames[dominionGame.Id] = dominionGame
+
+			state, err := p.LoadState(dominionGame.Id)
+			Ω(err).Should(BeNil())
+			Ω(state).Should(Equal(dominionGameState))
+
+			newState := "new-state"
+			err = p.SaveState(dominionGame.Id, newState)
+			Ω(err).Should(BeNil())
+
+			state, err = p.LoadState(dominionGame.Id)
+			Ω(err).Should(BeNil())
+			Ω(state).Should(Equal(newState))
 		})
 
-		It("should start game successfuly", func() {
+		It("should start game successfully", func() {
 		})
 
-		It("should send data to a playersuccessfuly", func() {
+		It("should send data to a player successfully", func() {
 		})
-
 	})
 })
