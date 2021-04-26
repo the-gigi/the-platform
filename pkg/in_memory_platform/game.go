@@ -2,11 +2,12 @@ package in_memory_platform
 
 import (
 	"github.com/pkg/errors"
-	"github.com/the-gigi/the-platform/pkg/object_model/game_client"
+	om "github.com/the-gigi/the-platform/pkg/object_model"
 )
 
 type Game struct {
-	game_client.Game
+	om.Game
+	state   string
 	players map[string]bool
 }
 
@@ -31,12 +32,13 @@ func (g Game) Join(player string) (err error) {
 	return
 }
 
-func newGame(gameId string, gameType game_client.GameType) Game {
+func newGame(gameId string, gameType om.GameType, state string) Game {
 	return Game{
-		Game: game_client.Game{
+		Game: om.Game{
 			Id:   gameId,
 			Type: gameType,
 		},
 		players: map[string]bool{},
+		state:   state,
 	}
 }

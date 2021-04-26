@@ -1,14 +1,19 @@
 package game_client
 
+import (
+	om "github.com/the-gigi/the-platform/pkg/object_model"
+)
+
 type GameLobby interface {
-	GetGameTypes() (gameTypes []GameType, err error)
-	GetOpenGames(gameType GameType) (games []Game, err error)
-	CreateGame(gameType GameType) (gameId string, err error)
-	Join(gameId string) (err error)
+	GetGameTypes() (gameTypes []om.GameType, err error)
+	GetOpenGames(gameType om.GameType) (games []om.Game, err error)
+	CreateGame(gameType om.GameType, state string) (gameId string, err error)
+	Join(gameId string) (playerId, err error)
+	StartGame(playerId, gameId string) (err error)
 }
 
 type RunningGame interface {
-	Do(player string, action string, data string) (result string, err error)
+	Do(playerId string, action string, data string) (result string, err error)
 	Leave() (err error)
 }
 

@@ -3,7 +3,7 @@ package in_memory_platform
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/the-gigi/the-platform/pkg/object_model/game_client"
+	om "github.com/the-gigi/the-platform/pkg/object_model"
 )
 
 var _ = Describe("Game Tests", func() {
@@ -12,12 +12,13 @@ var _ = Describe("Game Tests", func() {
 	)
 
 	BeforeEach(func() {
-		game = newGame("1", game_client.GameType{
+		gameType := om.GameType{
 			Name:           "cool game",
 			Description:    "a cool game",
 			MinPlayerCount: 2,
 			MaxPlayerCount: 4,
-		})
+		}
+		game = newGame("1", gameType, "")
 		game.PlayerCount = len(game.players)
 	})
 
