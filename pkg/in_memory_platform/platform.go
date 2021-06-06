@@ -66,13 +66,6 @@ func (p *InMemoryPlatform) CreateGame(gameType om.GameType, state string) (gameI
 
 	p.openGames[gameId] = game
 
-	err = p.isGameTypeValid(gameType)
-	if err != nil {
-		return
-	}
-
-	p.engines[gameEngine] = &gameType
-	p.gameTypes[gameType.Name] = &gameType
 	return
 }
 
